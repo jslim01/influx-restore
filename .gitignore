@@ -1,0 +1,3 @@
+backup/
+influxdb_data/
+tmp_restore/

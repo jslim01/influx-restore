@@ -1,0 +1,1 @@
+docker exec influxdb influx restore --token admintoken123 /restore/nfs/ssd_storage/influxdb2/2025-06-04

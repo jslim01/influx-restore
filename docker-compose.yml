@@ -1,0 +1,30 @@
+services:
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./backup:/backup
+      - ./tmp_restore:/restore
+      - ./influxdb_data:/var/lib/influxdb2
+    command: >
+      sh -c '
+        if [ ! -f /var/lib/influxdb2/.restored ]; then
+          mkdir -p /restore &&
+          tar -xf /backup/2025-06-04.tar.gz -C /restore &&
+          touch /var/lib/influxdb2/.restored;
+        fi;
+
+        influxd &
+
+        until curl -s http://localhost:8086/health | grep -q "status"; do
+          echo "Waiting for influxd to be ready..."
+          sleep 1
+        done
+
+        influx setup --username admin --password admin123 --org prod \
+          --bucket default --token admintoken123 --force
+
+        wait
+      '
