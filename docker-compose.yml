@@ -8,6 +8,7 @@ services:
       - ./backup:/backup
       - ./tmp_restore:/restore
       - ./influxdb_data:/var/lib/influxdb2
+      - ./scripts:/scripts
     command: >
       sh -c '
         if [ ! -f /var/lib/influxdb2/.restored ]; then
@@ -25,6 +26,8 @@ services:
 
         influx setup --username admin --password admin123 --org prod \
           --bucket default --token admintoken123 --force
+
+        influx bucket create --name new_ai_data --org prod --token admintoken123
 
         wait
       '
